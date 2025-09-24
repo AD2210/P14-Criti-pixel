@@ -223,12 +223,31 @@ class VideoGame
         return $this->tags;
     }
 
+    //ajout methode pour ajouter des tags
+    public function addTag(Tag $tag): VideoGame
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+        return $this;
+    }
+
     /**
      * @return Collection<Review>
      */
     public function getReviews(): Collection
     {
         return $this->reviews;
+    }
+
+    //ajout methode pour ajouter des reviews
+    public function addReview(Review $review): VideoGame
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setVideoGame($this);
+        }
+        return $this;
     }
 
     public function hasAlreadyReview(User $user): bool

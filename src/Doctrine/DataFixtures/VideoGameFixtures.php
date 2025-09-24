@@ -2,6 +2,8 @@
 
 namespace App\Doctrine\DataFixtures;
 
+use App\Model\Entity\Review;
+use App\Model\Entity\Tag;
 use App\Model\Entity\User;
 use App\Model\Entity\VideoGame;
 use App\Rating\CalculateAverageRating;
@@ -17,17 +19,20 @@ use function array_fill_callback;
 final class VideoGameFixtures extends Fixture implements DependentFixtureInterface
 {
     public function __construct(
-        private readonly Generator $faker,
+        private readonly Generator              $faker,
         private readonly CalculateAverageRating $calculateAverageRating,
-        private readonly CountRatingsPerValue $countRatingsPerValue
-    ) {
+        private readonly CountRatingsPerValue   $countRatingsPerValue
+    )
+    {
     }
 
     public function load(ObjectManager $manager): void
     {
-        $users = $manager->getRepository(User::class)->findAll();
 
-        $videoGames = array_fill_callback(0, 50, fn (int $index): VideoGame => (new VideoGame)
+        $users = $manager->getRepository(User::class)->findAll();
+        $tags = $manager->getRepository(Tag::class)->findAll();
+
+        $videoGames = array_fill_callback(0, 50, fn(int $index): VideoGame => (new VideoGame)
             ->setTitle(sprintf('Jeu vidéo %d', $index))
             ->setDescription($this->faker->paragraphs(10, true))
             ->setReleaseDate(new DateTimeImmutable())
@@ -37,18 +42,36 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
             ->setImageSize(2_098_872)
         );
 
-        // TODO : Ajouter les tags aux vidéos
+        // on ajoute entre 0 et 3 tags pour chaque jeu
+        foreach ($videoGames as $videoGame) {
+            for ($i = 0; $i < random_int(0, 3); $i++) {
+                $videoGame->addTag($tags[array_rand($tags,1)]);
+            }
+        }
 
         array_walk($videoGames, [$manager, 'persist']);
 
         $manager->flush();
 
-        // TODO : Ajouter des reviews aux vidéos
+        // on ajoute des reviews pour chaque jeu (entre 1 et 5) avec
+        $videoGames = $manager->getRepository(VideoGame::class)->findAll();
+        foreach ($videoGames as $videoGame) {
+            /** @var User $user */
+            $user = $users[array_rand($users,1)];
 
+            $reviews = array_fill_callback(0, rand(1,5), fn(int $index): Review => (new Review)
+                ->setRating($this->faker->numberBetween(1, 5))
+                ->setUser($user)
+                ->setVideoGame($videoGame)
+                ->setComment(rand(0, 2)===1 ? $this->faker->paragraphs(10, true) : null)
+            );
+            array_walk($reviews, [$manager, 'persist']);
+            $manager->flush();
+        }
     }
 
     public function getDependencies(): array
     {
-        return [UserFixtures::class];
+        return [UserFixtures::class, TagFixtures::class];
     }
 }
