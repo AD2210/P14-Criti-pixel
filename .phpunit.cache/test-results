@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"App\\Tests\\Unit\\RatingCalculationTest::testCalculateAverage#0":0.003,"App\\Tests\\Unit\\RatingCalculationTest::testCalculateAverage#1":0,"App\\Tests\\Unit\\RatingCalculationTest::testCalculateAverage#2":0,"App\\Tests\\Unit\\RatingCalculationTest::testCalculateAverage#3":0}}
