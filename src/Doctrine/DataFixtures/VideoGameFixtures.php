@@ -53,7 +53,7 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
 
         $manager->flush();
 
-        // on ajoute des reviews pour chaque jeu (entre 1 et 5) avec
+        // on ajoute des reviews pour chaque jeu (entre 1 et 5) @todo: certain user ont plusieurs reviews pour un même jeu
         $videoGames = $manager->getRepository(VideoGame::class)->findAll();
         foreach ($videoGames as $videoGame) {
             /** @var User $user */
