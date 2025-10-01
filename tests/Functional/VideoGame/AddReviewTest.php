@@ -92,7 +92,7 @@ final class AddReviewTest extends FunctionalTestCase
         self::assertResponseIsUnprocessable(); // Lève l'exception avant d'arriver ici
     }
 
-    // Contrôle si une review n'a pas été généré par les fixtures
+    // Contrôle si une review n'a pas été généré par les fixtures et la supprime le cas échéant
     private function ensureReviewNotPublishedByUser(string $email = 'user+0@email.com'): void
     {
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $email]);

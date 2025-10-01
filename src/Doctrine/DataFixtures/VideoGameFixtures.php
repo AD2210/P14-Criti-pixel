@@ -53,17 +53,14 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
 
         $manager->flush();
 
-        // on ajoute des reviews pour chaque jeu (entre 1 et 5) @todo: certain user ont plusieurs reviews pour un même jeu
+        // on ajoute des reviews pour chaque jeu (entre 1 et 5)
         $videoGames = $manager->getRepository(VideoGame::class)->findAll();
         foreach ($videoGames as $videoGame) {
-            /** @var User $user */
-            $user = $users[array_rand($users,1)];
-
-            $reviews = array_fill_callback(0, rand(1,5), fn(int $index): Review => (new Review)
+            $reviews = array_fill_callback(0, rand(0,3), fn(int $index): Review => (new Review)
                 ->setRating($this->faker->numberBetween(1, 5))
-                ->setUser($user)
+                ->setUser($this->faker->randomElement($users))
                 ->setVideoGame($videoGame)
-                ->setComment(rand(0, 2)===1 ? $this->faker->paragraphs(10, true) : null)
+                ->setComment(rand(0, 2)===1 ? $this->faker->paragraphs(1, true) : null)
             );
             array_walk($reviews, [$manager, 'persist']);
             $manager->flush();
