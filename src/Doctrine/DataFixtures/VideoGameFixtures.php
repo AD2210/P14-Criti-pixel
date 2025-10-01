@@ -8,10 +8,13 @@ use App\Model\Entity\User;
 use App\Model\Entity\VideoGame;
 use App\Rating\CalculateAverageRating;
 use App\Rating\CountRatingsPerValue;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Random\RandomException;
+use function array_fill_callback;
 
 final class VideoGameFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -22,6 +25,9 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
     ) {
     }
 
+    /**
+     * @throws RandomException
+     */
     public function load(ObjectManager $manager): void
     {
         $users = $manager->getRepository(User::class)->findAll();
@@ -30,13 +36,13 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
         /**
          * @var array<int, VideoGame> $videoGames
          */
-        $videoGames = \array_fill_callback(
+        $videoGames = array_fill_callback(
             0,
             50,
             fn (int $index): VideoGame => (new VideoGame())
             ->setTitle(sprintf('Jeu vidéo %d', $index))
             ->setDescription($this->faker->paragraphs(10, true))
-            ->setReleaseDate(new \DateTimeImmutable())
+            ->setReleaseDate(new DateTimeImmutable())
             ->setTest($this->faker->paragraphs(6, true))
             ->setRating(($index % 5) + 1)
             ->setImageName(sprintf('video_game_%d.png', $index))
@@ -46,7 +52,7 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
         // on ajoute entre 0 et 3 tags pour chaque jeu
         foreach ($videoGames as $videoGame) {
             for ($i = 0; $i < random_int(0, 3); ++$i) {
-                $videoGame->addTag($tags[array_rand($tags, 1)]);
+                $videoGame->addTag($tags[array_rand($tags)]);
             }
         }
 
@@ -60,7 +66,7 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
             /**
              * @var array<int, Review> $reviews
              */
-            $reviews = \array_fill_callback(
+            $reviews = array_fill_callback(
                 0,
                 rand(0, 3),
                 fn (int $index): Review => (new Review())
