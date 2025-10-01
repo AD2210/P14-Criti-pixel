@@ -9,6 +9,8 @@ use App\List\ListFactory;
 use App\List\VideoGameList\Pagination;
 use App\Model\Entity\Review;
 use App\Model\Entity\VideoGame;
+use App\Rating\CalculateAverageRating;
+use App\Rating\CountRatingsPerValue;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,18 +25,29 @@ final class VideoGameController extends AbstractController
     #[Route(name: 'list', methods: [Request::METHOD_GET])]
     public function list(
         #[ValueResolver('pagination')]
-        Pagination $pagination,
-        Request $request,
+        Pagination  $pagination,
+        Request     $request,
         ListFactory $listFactory,
-    ): Response {
+    ): Response
+    {
         $videoGamesList = $listFactory->createVideoGamesList($pagination)->handleRequest($request);
 
         return $this->render('views/video_games/list.html.twig', ['list' => $videoGamesList]);
     }
 
     #[Route('{slug}', name: 'show', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function show(VideoGame $videoGame, EntityManagerInterface $entityManager, Request $request): Response
+    public function show(
+        VideoGame              $videoGame,
+        EntityManagerInterface $entityManager,
+        Request                $request,
+        CalculateAverageRating $calculateAverageRating,
+        CountRatingsPerValue   $count
+    ): Response
     {
+        // On ra fraichit les notations du jeu
+        $calculateAverageRating->calculateAverage($videoGame);
+        $count->countRatingsPerValue($videoGame);
+
         $review = new Review();
 
         $form = $this->createForm(ReviewType::class, $review)->handleRequest($request);
