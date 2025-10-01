@@ -15,15 +15,13 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 final readonly class PaginationValueResolver implements ValueResolverInterface
 {
     /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
      * @return iterable<Pagination>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         $argumentType = $argument->getType();
 
-        if ($argumentType !== Pagination::class) {
+        if (Pagination::class !== $argumentType) {
             return [];
         }
 

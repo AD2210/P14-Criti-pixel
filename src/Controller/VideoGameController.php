@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/', name: 'video_games_')]
 final class VideoGameController extends AbstractController
@@ -26,11 +25,10 @@ final class VideoGameController extends AbstractController
     #[Route(name: 'list', methods: [Request::METHOD_GET])]
     public function list(
         #[ValueResolver('pagination')]
-        Pagination  $pagination,
-        Request     $request,
+        Pagination $pagination,
+        Request $request,
         ListFactory $listFactory,
-    ): Response
-    {
+    ): Response {
         $videoGamesList = $listFactory->createVideoGamesList($pagination)->handleRequest($request);
 
         return $this->render('views/video_games/list.html.twig', ['list' => $videoGamesList]);
@@ -38,13 +36,12 @@ final class VideoGameController extends AbstractController
 
     #[Route('{slug}', name: 'show', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function show(
-        VideoGame              $videoGame,
+        VideoGame $videoGame,
         EntityManagerInterface $entityManager,
-        Request                $request,
+        Request $request,
         CalculateAverageRating $calculateAverageRating,
-        CountRatingsPerValue   $count
-    ): Response
-    {
+        CountRatingsPerValue $count,
+    ): Response {
         // On ra fraichit les notations du jeu
         $calculateAverageRating->calculateAverage($videoGame);
         $count->countRatingsPerValue($videoGame);
@@ -53,7 +50,7 @@ final class VideoGameController extends AbstractController
 
         $form = $this->createForm(ReviewType::class, $review)->handleRequest($request);
 
-        /** @var USER $user */
+        /** @var User $user */
         $user = $this->getUser();
         if ($form->isSubmitted() && $form->isValid()) {
             $this->denyAccessUnlessGranted('review', $videoGame);
@@ -61,6 +58,7 @@ final class VideoGameController extends AbstractController
             $review->setUser($user);
             $entityManager->persist($review);
             $entityManager->flush();
+
             return $this->redirectToRoute('video_games_show', ['slug' => $videoGame->getSlug()]);
         }
 
