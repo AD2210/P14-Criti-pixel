@@ -67,12 +67,25 @@ final class FilterTest extends FunctionalTestCase
         self::assertSelectorCount($expectedCount, 'article.game-card');
     }
 
+    public function testShouldFilterVideoGamesByInvalidTag(): void
+    {
+        $this->get('/');
+
+        //On construit la requête de filtrage avec un tag invalide
+        $submitData = ['filter[tags]' => [0=>9]];
+
+        // doit lever une exception
+        self::expectExceptionMessage('Input "filter[tags][]" cannot take "9" as a value (possible values: "1").');
+        $this->client->submitForm('Filtrer', $submitData, 'GET');
+    }
+
     public static function provideTags(): array
     {
         return [
             [[]],
             [[1]],
             [[1, 2]],
+            [[1, 2, 3]],
         ];
     }
 }
