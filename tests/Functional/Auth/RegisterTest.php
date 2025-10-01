@@ -35,19 +35,21 @@ final class RegisterTest extends FunctionalTestCase
     {
         $this->get('/auth/register');
 
-        $this->client->submitForm('S\'inscrire', $formData);
+        $data = array_replace(self::getFormData(), $formData); // On assure l'override avec un array_replace
+
+        $this->client->submitForm('S\'inscrire', $data);
 
         self::assertResponseIsUnprocessable();
     }
 
     public static function provideInvalidFormData(): iterable
     {
-        yield 'empty username' => [self::getFormData(['register[username]' => ''])];
-        yield 'non unique username' => [self::getFormData(['register[username]' => 'user+1'])];
-        yield 'too long username' => [self::getFormData(['register[username]' => 'Lorem ipsum dolor sit amet orci aliquam'])];
-        yield 'empty email' => [self::getFormData(['register[email]' => ''])];
-        yield 'non unique email' => [self::getFormData(['register[email]' => 'user+1@email.com'])];
-        yield 'invalid email' => [self::getFormData(['register[email]' => 'fail'])];
+        yield 'empty username' => [['register[username]' => '']];
+        yield 'non unique username' => [['register[username]' => 'user+1']];
+        yield 'too long username' => [['register[username]' => 'Lorem ipsum dolor sit amet orci aliquam']];
+        yield 'empty email' => [['register[email]' => '']];
+        yield 'non unique email' => [['register[email]' => 'user+1@email.com']];
+        yield 'invalid email' => [['register[email]' => 'fail']];
     }
 
     public static function getFormData(array $overrideData = []): array
