@@ -30,7 +30,9 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
         /**
          * @var array<int, VideoGame> $videoGames
          */
-        $videoGames = \array_fill_callback(0, 50,
+        $videoGames = \array_fill_callback(
+            0,
+            50,
             fn (int $index): VideoGame => (new VideoGame())
             ->setTitle(sprintf('Jeu vidéo %d', $index))
             ->setDescription($this->faker->paragraphs(10, true))
@@ -58,7 +60,9 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
             /**
              * @var array<int, Review> $reviews
              */
-            $reviews = \array_fill_callback(0, rand(0, 3),
+            $reviews = \array_fill_callback(
+                0,
+                rand(0, 3),
                 fn (int $index): Review => (new Review())
                 ->setRating($this->faker->numberBetween(1, 5))
                 ->setUser($this->faker->randomElement($users))
