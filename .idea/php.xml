@@ -148,12 +148,14 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php84" />
       <path value="$PROJECT_DIR$/vendor/dama/doctrine-test-bundle" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a539d79a-05e5-4c89-b742-91f23c4061a9" timeout="60000" />
+      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">

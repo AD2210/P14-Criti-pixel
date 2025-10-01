@@ -32,7 +32,15 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
         $users = $manager->getRepository(User::class)->findAll();
         $tags = $manager->getRepository(Tag::class)->findAll();
 
-        $videoGames = array_fill_callback(0, 50, fn(int $index): VideoGame => (new VideoGame)
+        /**
+         * @var array<int, VideoGame> $videoGames
+         */
+        $videoGames = array_fill_callback(0, 50,
+            /**
+             * @param int $index
+             * @return VideoGame
+             */
+            fn(int $index): VideoGame => (new VideoGame)
             ->setTitle(sprintf('Jeu vidéo %d', $index))
             ->setDescription($this->faker->paragraphs(10, true))
             ->setReleaseDate(new DateTimeImmutable())
@@ -56,13 +64,23 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
         // on ajoute des reviews pour chaque jeu (entre 1 et 5)
         $videoGames = $manager->getRepository(VideoGame::class)->findAll();
         foreach ($videoGames as $videoGame) {
-            $reviews = array_fill_callback(0, rand(0,3), fn(int $index): Review => (new Review)
+            /**
+             * @var array<int, Review> $reviews
+             */
+            $reviews = array_fill_callback(0, rand(0,3),
+                /**
+                 * @param int $index
+                 * @return Review
+                 */
+                fn(int $index): Review => (new Review)
                 ->setRating($this->faker->numberBetween(1, 5))
                 ->setUser($this->faker->randomElement($users))
                 ->setVideoGame($videoGame)
                 ->setComment(rand(0, 2)===1 ? $this->faker->paragraphs(1, true) : null)
             );
             array_walk($reviews, [$manager, 'persist']);
+            $this->calculateAverageRating->calculateAverage($videoGame);
+            $this->countRatingsPerValue->countRatingsPerValue($videoGame);
             $manager->flush();
         }
     }

@@ -8,6 +8,7 @@ use App\Form\ReviewType;
 use App\List\ListFactory;
 use App\List\VideoGameList\Pagination;
 use App\Model\Entity\Review;
+use App\Model\Entity\User;
 use App\Model\Entity\VideoGame;
 use App\Rating\CalculateAverageRating;
 use App\Rating\CountRatingsPerValue;
@@ -52,10 +53,12 @@ final class VideoGameController extends AbstractController
 
         $form = $this->createForm(ReviewType::class, $review)->handleRequest($request);
 
+        /** @var USER $user */
+        $user = $this->getUser();
         if ($form->isSubmitted() && $form->isValid()) {
             $this->denyAccessUnlessGranted('review', $videoGame);
             $review->setVideoGame($videoGame);
-            $review->setUser($this->getUser());
+            $review->setUser($user);
             $entityManager->persist($review);
             $entityManager->flush();
             return $this->redirectToRoute('video_games_show', ['slug' => $videoGame->getSlug()]);

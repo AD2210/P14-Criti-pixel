@@ -33,6 +33,9 @@ final class VideoGamesList implements Countable, IteratorAggregate
 
     private string $route;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $routeParameters;
 
     public function __construct(
@@ -142,6 +145,9 @@ final class VideoGamesList implements Countable, IteratorAggregate
         return $this->pagination;
     }
 
+    /**
+     * @return Traversable<array-key, videoGame>
+     */
     public function getIterator(): Traversable
     {
         return $this->data;
@@ -149,7 +155,7 @@ final class VideoGamesList implements Countable, IteratorAggregate
 
     public function count(): int
     {
-        return count($this->data->getIterator());
+        return count($this->data);
     }
 
     public function generateUrl(int $page): string

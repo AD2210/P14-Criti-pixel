@@ -29,6 +29,10 @@ final class FilterTest extends FunctionalTestCase
         self::assertSelectorCount(1, 'article.game-card');
     }
 
+    /**
+     * @param array<int, list<list<int>>> $tags
+     * @return void
+     */
     #[DataProvider('provideTags')]
     public function testShouldFilterVideoGamesByTag(array $tags): void
     {
@@ -79,6 +83,9 @@ final class FilterTest extends FunctionalTestCase
         $this->client->submitForm('Filtrer', $submitData, 'GET');
     }
 
+    /**
+     * @return array<int, list<list<int>>>
+     */
     public static function provideTags(): array
     {
         return [

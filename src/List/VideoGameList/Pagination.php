@@ -11,6 +11,7 @@ use App\Model\ValueObject\Sorting;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use phpDocumentor\Reflection\Types\ArrayKey;
 use RuntimeException;
 use Traversable;
 
@@ -67,7 +68,7 @@ final class Pagination implements IteratorAggregate, Countable
     }
 
     /**
-     * @return Traversable<string, int>
+     * @return ArrayIterator<int|string, Page>
      */
     public function getIterator(): Traversable
     {
@@ -102,11 +103,17 @@ final class Pagination implements IteratorAggregate, Countable
         return $this->limit;
     }
 
+    /**
+     * @return array<int, Direction>
+     */
     public function getDirections(): array
     {
         return Direction::cases();
     }
 
+    /**
+     * @return array<int, Sorting>
+     */
     public function getAllSorting(): array
     {
         return Sorting::cases();

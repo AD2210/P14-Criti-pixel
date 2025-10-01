@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
 use App\Model\Entity\User;
@@ -7,15 +9,29 @@ use App\Model\Entity\VideoGame;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, VideoGame|null>
+ */
 class VideoGameVoter extends Voter
 {
     public const REVIEW = 'review';
 
+    /**
+     * @param string $attribute
+     * @param VideoGame|null $subject
+     * @return bool
+     */
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $attribute === self::REVIEW && $subject instanceof VideoGame;
     }
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

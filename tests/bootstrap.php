@@ -4,9 +4,7 @@ use Symfony\Component\Dotenv\Dotenv;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
-if (method_exists(Dotenv::class, 'bootEnv')) {
-    (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
-}
+(new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 
 // create up-to-date TEST database before all tests start
 passthru('php bin/console doctrine:database:drop --env=test --force --if-exists');

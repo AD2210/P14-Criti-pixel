@@ -22,7 +22,7 @@ class RatingCalculationTest extends TestCase
     }
 
     #[DataProvider('provideReviewRatingSet')]
-    public function testCalculateAverage($nb1, $nb2, $nb3, $nb4, $nb5, $expected): void
+    public function testCalculateAverage(int $nb1,int $nb2,int $nb3, int $nb4, int $nb5, int $expected): void
     {
         $nb = [$nb1, $nb2, $nb3, $nb4, $nb5];
         // on itère sur les 5 valeurs (rating)
@@ -51,7 +51,7 @@ class RatingCalculationTest extends TestCase
      * @return void
      */
     #[DataProvider('provideReviewRatingSet')]
-    public function testCountPerValue($nb1, $nb2, $nb3, $nb4, $nb5): void
+    public function testCountPerValue(int $nb1, int $nb2, int $nb3, int $nb4, int $nb5): void
     {
         $nb = [$nb1, $nb2, $nb3, $nb4, $nb5];
         // on itère sur les 5 valeurs (rating)
@@ -79,6 +79,10 @@ class RatingCalculationTest extends TestCase
         $this->assertEquals($expected[5], $this->videoGame->getNumberOfRatingsPerValue()->getNumberOfFive());
     }
 
+
+    /**
+     * @return array<int, list<int|null>>
+     */
     // [nb 1star, nb 2stars, nb 3stars, nb 4stars, nb 5stars, expected average]
     // le but est de vérifier que le calcul est correct et l'arrondi également (ceil)
     public static function provideReviewRatingSet(): array
