@@ -14,7 +14,7 @@ jobs:
     name: CI PHP ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
     strategy:
-      # on ne parallélise pas, rallonge le tempd'execution mais evite les plantages
+      # on ne parallélise pas, rallonge le temps d'execution mais evite les plantages
       max-parallel: 1
       matrix:
         php-versions: ['8.2', '8.3', '8.4']
@@ -46,8 +46,6 @@ jobs:
       - name: Start docker services
         run: |
           docker compose -f docker-compose.yml up -d --build
-          # Attendre database prête
-          until docker compose exec -T database pg_isready -U symfony -d postgres; do sleep 1; done
 
       - name: Build assets (SASS)
         run: php bin/console sass:build --no-interaction
