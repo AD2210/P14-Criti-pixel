@@ -54,10 +54,6 @@ jobs:
         env:
           SYMFONY_ENV: test
         run: |
-          # S'assure qu'aucune session ne bloque le drop
-          PSQL="docker compose exec -T database psql -U symfony -d postgres -v ON_ERROR_STOP=1 -c"
-          $PSQL "SELECT 1;"
-          $PSQL "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${TEST_DB_NAME}' AND pid <> pg_backend_pid();"
           php bin/console doctrine:database:drop -f --if-exists --env=test || true
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:migrations:migrate -n --env=test
@@ -68,10 +64,3 @@ jobs:
 
       - name: Static analysis
         run: php vendor/bin/phpstan
-
-      - name: Cleanup test database
-        if: always()
-        run: |
-          PSQL="docker compose exec -T database psql -U symfony -d postgres -v ON_ERROR_STOP=1 -c"
-          $PSQL "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${TEST_DB_NAME}' AND pid <> pg_backend_pid();"
-          php bin/console doctrine:database:drop -f --if-exists --env=test || true
