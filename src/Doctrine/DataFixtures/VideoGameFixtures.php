@@ -38,7 +38,7 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
          */
         $videoGames = array_fill_callback(
             0,
-            50,
+            30,
             fn (int $index): VideoGame => (new VideoGame())
             ->setTitle(sprintf('Jeu vidéo %d', $index))
             ->setDescription($this->faker->paragraphs(10, true))

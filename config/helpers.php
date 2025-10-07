@@ -15,7 +15,6 @@ function array_fill_callback(int $startIndex, int $count, callable $callback): a
     $data = [];
 
     for ($i = $startIndex; $i < $startIndex + $count; ++$i) {
-        /** @var T $value */
         $data[$i] = $callback($i);
     }
 

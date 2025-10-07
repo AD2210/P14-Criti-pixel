@@ -1,0 +1,67 @@
+name: CI
+on:
+  push:
+    branches:
+      - Ci
+
+# Empêche les exécutions concurrentes de ce workflow sur la même ref
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: CI PHP ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+    strategy:
+      # on ne parallélise pas, rallonge le temps d'execution mais evite les plantages
+      max-parallel: 1
+      matrix:
+        php-versions: ['8.2', '8.3', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: pdo, pdo_pgsql, intl, mbstring, json, ctype, iconv, xml, hash, sodium, curl, zip
+          tools: composer, phpunit:latest, phpstan, php-cs-fixer
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Start docker services
+        run: |
+          docker compose -f docker-compose.yml up -d --build
+
+      - name: Build assets (SASS)
+        run: php bin/console sass:build --no-interaction
+
+      - name: Terminate existing test database connections
+        run: |
+          docker compose exec -T database psql -U symfony -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'criti-pixel_test' AND pid <> pg_backend_pid();" || true
+
+      - name: Tests
+        run: php bin/phpunit
+
+      - name: Cleanup test database
+        if: always()
+        run: |
+          docker compose exec -T database psql -U symfony -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'criti-pixel_test' AND pid <> pg_backend_pid();" || true
+          php bin/console doctrine:database:drop --env=test --force --if-exists || true
+
+      - name: Static analysis
+        run: php vendor/bin/phpstan
