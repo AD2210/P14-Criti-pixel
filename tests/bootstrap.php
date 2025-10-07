@@ -13,9 +13,9 @@ passthru('php bin/console doctrine:migrations:migrate --env=test -n');
 passthru('php bin/console doctrine:fixtures:load --env=test -n');
 
 // remove TEST database after all tests end
-//register_shutdown_function(function () {
-//    passthru('php bin/console doctrine:database:drop --env=test --force --if-exists');
-//});
+register_shutdown_function(function () {
+    passthru('php bin/console doctrine:database:drop --env=test --force --if-exists');
+});
 
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
