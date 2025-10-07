@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class AddReviewTest extends FunctionalTestCase
 {
-
     /**
      * Test si on affiche le formulaire de review lorsque user logué et pas de review
      *
@@ -45,9 +44,9 @@ final class AddReviewTest extends FunctionalTestCase
         $this->ensureReviewNotPublishedByUser('user+0@email.com');
 
         $this->login('user+0@email.com');
-        $crawler =$this->get('/jeu-video-0');
+        $crawler = $this->get('/jeu-video-0');
         $form = $crawler->selectButton('Poster')->form();
-        $this->client->submit($form , [
+        $this->client->submit($form, [
             'review[rating]' => 5,
             'review[comment]' => 'Test'
         ]);
@@ -81,11 +80,11 @@ final class AddReviewTest extends FunctionalTestCase
         $this->ensureReviewNotPublishedByUser('user+0@email.com');
 
         $this->login('user+0@email.com');
-        $crawler =$this->get('/jeu-video-0');
+        $crawler = $this->get('/jeu-video-0');
         $form = $crawler->selectButton('Poster')->form();
 
         self::expectExceptionMessage('Input "review[rating]" cannot take "" as a value (possible values: "1", "2", "3", "4", "5").');
-        $this->client->submit($form , [
+        $this->client->submit($form, [
             'review[rating]' => '',
             'review[comment]' => ''
         ]);

@@ -22,7 +22,7 @@ class RatingCalculationTest extends TestCase
     }
 
     #[DataProvider('provideReviewRatingSet')]
-    public function testCalculateAverage(int $nb1,int $nb2,int $nb3, int $nb4, int $nb5, int $expected): void
+    public function testCalculateAverage(int $nb1,int $nb2,int $nb3, int $nb4, int $nb5, ?int $expected): void
     {
         $nb = [$nb1, $nb2, $nb3, $nb4, $nb5];
         // on itère sur les 5 valeurs (rating)

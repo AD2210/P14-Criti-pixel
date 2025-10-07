@@ -173,7 +173,7 @@
       <path value="$PROJECT_DIR$/vendor/fidry/cpu-core-counter" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a539d79a-05e5-4c89-b742-91f23c4061a9" timeout="60000" />

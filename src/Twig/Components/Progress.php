@@ -8,13 +8,13 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent]
 final class Progress
 {
-    public VideoGame $videoGame;
+    public ?VideoGame $videoGame = null;
 
-    public int $number;
+    public int $number = 0;
 
     public function getPercent(): int
     {
-        $nbOfReviews = count($this->videoGame->getReviews());
+        $nbOfReviews = count($this->videoGame?->getReviews() ?? []);
 
         return (0 === $nbOfReviews) ? 0 : (int) round(($this->number / $nbOfReviews) * 100);
     }
